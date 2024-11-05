@@ -1,26 +1,32 @@
 package logic
 
-import "Queue/Fifo/logic/utils"
+import (
+	"Queue/Fifo/logic/utils"
+)
 
 type Logic struct {
 	Public       Queue
 	Nonepriorety Queue
 	Priorety     Queue
+	CashPublic   int
 }
+
+const Priora string = "Get a Credit"
 
 func NewLogic() *Logic {
 	l := Logic{}
 	l.Public = *New()
 	l.Priorety = *New()
 	l.Nonepriorety = *New()
+	l.CashPublic = 1
 
 	return &l
 }
 
-// разбивает и распледиляет заказы в на приор и не
+// бивает и распледиляет заказы в на приор и не
 func (l *Logic) Add(offerName string) *Offer {
 
-	if offerName == "-4" {
+	if offerName == Priora {
 		l.Priorety.Enqueue(Offer{Name: offerName,
 			Number: utils.UniqeNumbers()})
 
@@ -29,26 +35,35 @@ func (l *Logic) Add(offerName string) *Offer {
 			Number: utils.UniqeNumbers()})
 	}
 	l.choose()
+
 	return &Offer{}
+
 }
 
 // выполняет условия добавление на выход очереди
 func (l *Logic) choose() *Offer {
-	if l.Priorety.Isempty() {
-		l.Public.Enqueue(*l.Nonepriorety.Dequeue())
+	if l.Public.Len() < l.CashPublic {
 
-		//fmt.Println(" done offer (Exchange money),  number", num)
-	} else {
-		//element := (*s)[len(*s)-1]
-		//*s = (*s)[:len(*s)-1]
-
-		l.Public.Enqueue(*l.Priorety.Dequeue())
-		//fmt.Println(" done offer (Exchange money),  number", num)
+		if l.Priorety.Isempty() {
+			v := l.Nonepriorety.Dequeue()
+			if v != nil {
+				l.Public.Enqueue(*v)
+			}
+		} else {
+			v := l.Priorety.Dequeue()
+			if v != nil {
+				l.Public.Enqueue(*v)
+			}
+		}
 	}
+
 	return &Offer{}
 }
 
 // выбор кассира выполнение заказа
 func (l *Logic) Getoffer() *Offer {
-	return l.Public.Dequeue()
+	//len(l.Public)= l.CashPublic
+	v := l.Public.Dequeue()
+	l.choose()
+	return v
 }
