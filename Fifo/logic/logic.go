@@ -4,6 +4,8 @@ import (
 	"Queue/Fifo/logic/utils"
 )
 
+//aplication
+
 type Logic struct {
 	Public       Queue
 	Nonepriorety Queue

@@ -1,5 +1,6 @@
 package logic
 
+// enterprice
 type Queue struct {
 	Arr []Offer
 }
